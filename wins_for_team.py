@@ -2,23 +2,31 @@ import nba_py
 import calendar
 import sys
 
-#month = sys.argv[1]
-#year = sys.argv[2]
-#team = sys.argv[3]
-
-
 #game_sequence = headers[1]
 #points = headers[21]
 #team_abbv = headers[4]
 
-teams = ['POR', 'OKC', 'LAC', 'LAL', 'BKN', 'HOU', 'PHI', 'CLE', 'GSW', 'MIN', 'DEN', 'SAS']
+johnny_teams = ['POR', 'OKC', 'LAC', 'LAL', 'BKN', 'HOU']
+jonyen_teams = ['PHI', 'CLE', 'GSW', 'MIN', 'DEN', 'SAS']
+teams = johnny_teams + jonyen_teams
+#all_teams = ['POR','OKC','LAC','LAL','BKN','HOU','PHI','CLE','GSW','MIN','DEN','SAS','MEM','PHX','NOP','UTA','SAC','CHI','IND','WAS','MIA','CHA','BOS','TOR','MIL','DET','NYK','ATL','ORL','DAL']
 
-months = [(10,2015), (11,2015), (12,2015), (1,2016), (2,2016), (3,2016), (4,2016)]
+#months = [(10,2015), (11,2015)]#, (12,2015), (1,2016), (2,2016), (3,2016), (4,2016)]
+months = [(12,2015)]#, (1,2016), (2,2016), (3,2016), (4,2016)]
+
+johnny_wins = {}
+jonyen_wins = {}
+
+season_start = '10-27-2015'
+season_end = '4-13-2016'
 
 for month_tuple in months:
   month = month_tuple[0]
   year = month_tuple[1]
   start = 1
+
+  johnny_wins[month] = 0
+  jonyen_wins[month] = 0
 
   if month == 10:
     start = 27
@@ -40,14 +48,29 @@ for month_tuple in months:
         if rows[i][4] == team:
           team_points = rows[i][21]
           game_sequence = rows[i][1]
-          #print 'Team points: ' + str(team_points)
-          for j in range(len(rows)):
-            if rows[j][1] == game_sequence and rows[j][4] != team:
-              opponent_points = rows[j][21]
-  	      #print 'Opponent points: ' + str(opponent_points)
-              if team_points > opponent_points:
-                wins_by_month[team] += 1
+          if (rows[i-1][1] == game_sequence):
+            opponent_points = rows[i-1][21]
+            if team_points > opponent_points:
+              wins_by_month[team] += 1
+	      if team in johnny_teams:
+		johnny_wins[month] += 1
+	      if team in jonyen_teams:
+		jonyen_wins[month] += 1
+          if (i != len(rows) - 1 and rows[i+1][1] == game_sequence):
+            opponent_points = rows[i+1][21]
+            if team_points > opponent_points:
+              wins_by_month[team] += 1
+	      if team in johnny_teams:
+		johnny_wins[month] += 1
+	      if team in jonyen_teams:
+		jonyen_wins[month] += 1
   if month != 10:
-    for team in teams:
-      print team + " total wins in " + str(month) + "-" + str(year) + ": " + str(wins_by_month[team])
-  print "--------------"
+    for team in johnny_teams:
+      print team + "\t (" + str(month) + "-" + str(year) + "):\t " + str(wins_by_month[team])
+    print "--------------"
+    print "Johnny Total: " + str(johnny_wins[month])
+    print
+    for team in jonyen_teams:
+      print team + "\t (" + str(month) + "-" + str(year) + "):\t " + str(wins_by_month[team])
+    print "--------------"
+    print "JonYen Total: " + str(jonyen_wins[month])
